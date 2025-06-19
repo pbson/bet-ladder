@@ -602,7 +602,7 @@ const GameSetup = ({
                   </h2>
                 </div>
                 <ChevronUpIcon
-                  className={`w-6 h-6 text-white transition-transform ${
+                  className={`w-auto h-6 text-white transition-transform ${
                     isSlipOpen ? "rotate-180" : ""
                   }`}
                 />
@@ -635,7 +635,7 @@ const GameSetup = ({
                         <img
                           src={game.home.logo}
                           alt={game.home.name}
-                          className="w-6 h-6"
+                          className="w-auto h-6"
                         />
                         <span className="font-semibold">
                           {game.home.name} v {game.away.name}
@@ -643,7 +643,7 @@ const GameSetup = ({
                         <img
                           src={game.away.logo}
                           alt={game.away.name}
-                          className="w-6 h-6"
+                          className="w-auto h-6"
                         />
                       </div>
                     ) : (
@@ -1419,11 +1419,8 @@ export default function App() {
     setIsSimulating(false);
   };
   const handleAnimationEnd = useCallback(() => {
-    if (celebration?.type === "JACKPOT") {
-      handleReset();
-    }
     setCelebration(null);
-  }, [celebration]);
+  }, []);
 
   return (
     <div className="bg-[#0a192f] min-h-screen font-sans">
