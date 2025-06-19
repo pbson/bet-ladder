@@ -401,7 +401,7 @@ const CelebrationOverlay = ({
 };
 
 const Header = () => (
-  <header className="bg-slate-900/80 backdrop-blur-sm flex justify-between items-center p-4 shadow-lg sticky top-0 z-20 border-b-2 border-slate-700">
+  <header className="bg-[#053176] backdrop-blur-sm flex justify-between items-center p-4 shadow-lg sticky top-0 z-20 border-b-2 border-slate-700">
     <img
       src="https://cdn.boylesports.com/sportsbook-v5/sports_logo.svg"
       alt="Logo"
@@ -434,10 +434,11 @@ const GameSetup = ({
       if (prev.some((g) => g.id === game.id)) {
         return prev.filter((g) => g.id !== game.id);
       }
-      if (prev.length === 0) {
+      const newGames = prev.length < 3 ? [...prev, game] : prev;
+      if (newGames.length === 3) {
         setIsSlipOpen(true);
       }
-      return prev.length < 3 ? [...prev, game] : prev;
+      return newGames;
     });
   };
 
@@ -471,12 +472,12 @@ const GameSetup = ({
 
   return (
     <>
-      <div className="bg-slate-800 rounded-xl shadow-2xl border-2 border-slate-700 p-4">
-        <h2 className="text-xl font-bold text-slate-100 mb-3">
+      <div className="rounded-xl shadow-2xl border-2 p-4" style={{backgroundColor: '#053176', borderColor: '#0340a1'}}>
+        <h2 className="text-xl font-bold text-white mb-3">
           Pick Your Games
         </h2>
         <div className="relative mb-4">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white">
             <SearchIcon />
           </span>
           <input
@@ -484,10 +485,11 @@ const GameSetup = ({
             placeholder="Search competitions..."
             value={competitionSearch}
             onChange={(e) => setCompetitionSearch(e.target.value)}
-            className="w-full bg-slate-700/50 border-2 border-slate-600 rounded-lg p-3 pl-10 text-base text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full rounded-lg p-3 pl-10 text-base text-white border-2 focus:ring-2"
+            style={{backgroundColor: 'rgba(3,64,161,0.5)', borderColor: '#0340a1', focusRingColor: '#ffffff', focusBorderColor: '#ffffff'}}
           />
         </div>
-        <div className="space-y-2 max-h-96 lg:max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-700">
+        <div className="space-y-2 max-h-96 lg:max-h-[500px] overflow-y-auto pr-2 scrollbar-thin">
           {filteredCompetitions.map(([key, name]) => {
             const isExpanded = expandedCompetitions.includes(key);
             const competitionGames = MOCK_GAMES.filter(
@@ -502,11 +504,15 @@ const GameSetup = ({
             return (
               <div
                 key={key}
-                className="bg-slate-700/50 rounded-lg overflow-hidden"
+                className="rounded-lg overflow-hidden"
+                style={{backgroundColor: 'rgba(3,64,161,0.5)'}}
               >
                 <button
                   onClick={() => toggleCompetition(key)}
-                  className="w-full flex justify-between items-center p-3 text-left font-bold text-slate-200 hover:bg-slate-600/50"
+                  className="w-full flex justify-between items-center p-3 text-left font-bold text-white hover:bg-opacity-75 cursor-pointer"
+                  style={{backgroundColor: 'transparent'}}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = 'rgba(3,64,161,0.75)'}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                 >
                   <span>{name}</span>
                   <span
@@ -518,22 +524,23 @@ const GameSetup = ({
                   </span>
                 </button>
                 {isExpanded && (
-                  <div className="p-2 bg-slate-900/50 animate-fade-in">
-                    <div className="relative my-2">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                        <SearchIcon />
-                      </span>
-                      <input
-                        type="text"
-                        placeholder={`Search matches in ${name}...`}
-                        value={matchSearches[key] || ""}
-                        onChange={(e) =>
-                          handleMatchSearchChange(key, e.target.value)
-                        }
-                        className="w-full bg-slate-700 border-2 border-slate-600 rounded-lg p-2 pl-10 text-sm text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      />
-                    </div>
-                    <div className="space-y-1 max-h-60 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-700">
+                  <div className="p-2 animate-fade-in" style={{backgroundColor: 'rgba(5,49,118,0.5)'}}>
+                                          <div className="relative my-2">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white">
+                          <SearchIcon />
+                        </span>
+                        <input
+                          type="text"
+                          placeholder={`Search matches in ${name}...`}
+                          value={matchSearches[key] || ""}
+                          onChange={(e) =>
+                            handleMatchSearchChange(key, e.target.value)
+                          }
+                          className="w-full border-2 rounded-lg p-2 pl-10 text-sm text-white focus:ring-2"
+                          style={{backgroundColor: '#053176', borderColor: '#0340a1'}}
+                        />
+                      </div>
+                                          <div className="space-y-1 max-h-60 overflow-y-auto pr-2 scrollbar-thin">
                       {filteredMatches.map((game) => {
                         const isSelected = selectedGames.some(
                           (g) => g.id === game.id
@@ -546,8 +553,11 @@ const GameSetup = ({
                             className={`w-full flex items-center p-2 rounded-lg text-left transition-all duration-200 ${
                               isSelected
                                 ? "bg-green-500 text-white cursor-pointer"
-                                : "text-slate-200 hover:bg-slate-700/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                : "text-white disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                             }`}
+                            style={!isSelected ? {backgroundColor: 'transparent'} : {}}
+                            onMouseEnter={!isSelected ? (e) => e.target.style.backgroundColor = 'rgba(3,64,161,0.5)' : undefined}
+                            onMouseLeave={!isSelected ? (e) => e.target.style.backgroundColor = 'transparent' : undefined}
                           >
                             <img
                               src={game.home.logo}
@@ -574,7 +584,7 @@ const GameSetup = ({
         </div>
       </div>
 
-      {/* Bet Slip */}
+      {/* Your games */}
       <div
         className={`fixed bottom-0 left-0 right-0 z-30 transition-transform duration-300 ease-in-out ${
           selectedGames.length > 0 ? "translate-y-0" : "translate-y-full"
@@ -582,11 +592,12 @@ const GameSetup = ({
       >
         <div
           className={`transition-all duration-300 ease-in-out ${
-            isSlipOpen ? "bg-slate-800/80 backdrop-blur-sm" : ""
+            isSlipOpen ? "backdrop-blur-sm" : ""
           }`}
         >
           <div
-            className={`bg-slate-800 shadow-2xl rounded-t-2xl max-w-4xl mx-auto border-t-2 border-x-2 border-slate-600`}
+            className={`shadow-2xl rounded-t-2xl max-w-4xl mx-auto border-t-2 border-x-2`}
+            style={{backgroundColor: '#053176', borderColor: '#0340a1'}}
           >
             <div
               className="p-4 cursor-pointer"
@@ -594,11 +605,11 @@ const GameSetup = ({
             >
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-3">
-                  <span className="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg">
+                  <span className="text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg" style={{backgroundColor: '#0340a1'}}>
                     {selectedGames.length}
                   </span>
-                  <h2 className="text-xl font-bold text-slate-100">
-                    {isSlipOpen ? "Your Bet Slip" : "View Bet Slip"}
+                  <h2 className="text-xl font-bold text-white">
+                    {isSlipOpen ? "Your games" : "View Your games"}
                   </h2>
                 </div>
                 <ChevronUpIcon
@@ -610,9 +621,9 @@ const GameSetup = ({
             </div>
 
             {isSlipOpen && (
-              <div className="p-4 border-t-2 border-slate-700 animate-fade-in">
+              <div className="p-4 border-t-2 animate-fade-in" style={{borderColor: '#0340a1'}}>
                 <div className="flex justify-between items-center mb-3">
-                  <h2 className="text-lg font-bold text-slate-100">
+                  <h2 className="text-lg font-bold text-white">
                     Your 3 Games
                   </h2>
                   {selectedGames.length > 0 && (
@@ -630,7 +641,8 @@ const GameSetup = ({
                     return game ? (
                       <div
                         key={game.id}
-                        className="bg-slate-700 border border-slate-600 text-slate-100 p-2 rounded-lg flex items-center gap-2 text-sm animate-fade-in-up"
+                        className="border text-white p-2 rounded-lg flex items-center gap-2 text-sm animate-fade-in-up"
+                        style={{backgroundColor: '#053176', borderColor: '#0340a1'}}
                       >
                         <img
                           src={game.home.logo}
@@ -649,7 +661,8 @@ const GameSetup = ({
                     ) : (
                       <div
                         key={index}
-                        className="bg-slate-700/50 h-10 p-2 rounded-lg text-center text-slate-400 text-xs flex items-center justify-center"
+                        className="h-10 p-2 rounded-lg text-center text-white text-xs flex items-center justify-center"
+                        style={{backgroundColor: 'rgba(5,49,118,0.5)'}}
                       >
                         Empty Slot
                       </div>
@@ -657,19 +670,20 @@ const GameSetup = ({
                   })}
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-slate-100 mb-3">
+                  <h2 className="text-lg font-bold text-white mb-3">
                     Set Your Stake
                   </h2>
                   <div className="flex flex-col sm:flex-row gap-4 items-center">
                     <div className="relative flex-grow w-full">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white text-lg">
                         $
                       </span>
                       <input
                         type="number"
                         value={stake}
                         onChange={handleStakeChange}
-                        className="w-full bg-slate-700/50 border-2 border-slate-600 rounded-lg p-3 pl-7 text-lg font-bold text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full border-2 rounded-lg p-3 pl-7 text-lg font-bold text-white focus:ring-2"
+                        style={{backgroundColor: 'rgba(5,49,118,0.5)', borderColor: '#0340a1'}}
                       />
                     </div>
                     <div className="flex gap-2">
@@ -677,7 +691,10 @@ const GameSetup = ({
                         <button
                           key={amount}
                           onClick={() => setStake(amount)}
-                          className="bg-slate-600 text-slate-200 font-bold py-3 px-4 rounded-lg hover:bg-slate-500 transition-colors"
+                          className="text-white font-bold py-3 px-4 rounded-lg transition-colors cursor-pointer"
+                          style={{backgroundColor: '#0340a1'}}
+                          onMouseEnter={(e) => {e.target.style.backgroundColor = '#ffffff'; e.target.style.color = '#0340a1'}}
+                          onMouseLeave={(e) => {e.target.style.backgroundColor = '#0340a1'; e.target.style.color = '#ffffff'}}
                         >
                           ${amount}
                         </button>
@@ -691,9 +708,10 @@ const GameSetup = ({
                     disabled={!isReady}
                     className={`w-full text-white text-lg font-bold py-4 rounded-xl shadow-lg transition-all duration-300 ${
                       isReady
-                        ? "bg-green-600 hover:bg-green-500 animate-pulse-green"
-                        : "bg-slate-500 cursor-not-allowed"
+                        ? "bg-green-600 hover:bg-green-500 animate-pulse-green cursor-pointer"
+                        : "cursor-not-allowed"
                     }`}
+                    style={!isReady ? {backgroundColor: 'rgba(5,49,118,0.5)'} : {}}
                   >
                     {isReady
                       ? `Place Bet: $${stake.toFixed(2)}`
@@ -717,6 +735,7 @@ const BettingGrid = ({
   stake,
   gameTimes,
   boost,
+  boostPreview,
 }: {
   games: Game[];
   scores: { [key: string]: Score };
@@ -725,15 +744,16 @@ const BettingGrid = ({
   stake: number;
   gameTimes: { [key: string]: number };
   boost: { teamId: string; gameId: string; amount: number } | null;
+  boostPreview?: number;
 }) => {
   return (
     <div
-      className="p-1.5 bg-slate-800 rounded-xl shadow-2xl border-2 border-slate-600"
-      style={{ "--shine-angle": "15deg" } as CSSProperties}
+      className="p-1.5 rounded-xl shadow-2xl border-2"
+      style={{ "--shine-angle": "15deg", backgroundColor: '#053176', borderColor: '#0340a1' } as CSSProperties}
     >
       <div className="grid grid-cols-[2fr_repeat(6,1fr)]">
         {/* Header Row */}
-        <div className="p-3 font-bold text-slate-300 text-xs uppercase tracking-wider">
+        <div className="p-3 font-bold text-white text-xs uppercase tracking-wider">
           Game
         </div>
         {GOAL_THRESHOLDS.map((t) => (
@@ -741,7 +761,7 @@ const BettingGrid = ({
             <p className="font-extrabold text-white text-lg">{t.value}+</p>
           </div>
         ))}
-        <div className="text-center p-3 font-bold text-slate-300 text-xs uppercase tracking-wider"></div>
+        <div className="text-center p-3 font-bold text-white text-xs uppercase tracking-wider"></div>
 
         {/* Game Rows */}
         {games.map((game, rowIndex) => {
@@ -823,26 +843,43 @@ const BettingGrid = ({
                   isRowComplete ? "row-win-bg static-shine" : ""
                 }`}
               >
-                <p
-                  className={`font-bold text-lg text-yellow-300 ${
-                    boost?.gameId === game.id ? "animate-pulse" : ""
-                  }`}
-                >
-                  $
-                  {(
-                    ROW_PRIZE_MULTIPLIER * stake +
-                    (boost?.gameId === game.id ? boost.amount * 2 : 0)
-                  ).toFixed(2)}
-                </p>
+                {(() => {
+                  const currentRowAmount = ROW_PRIZE_MULTIPLIER * stake + (boost?.gameId === game.id ? boost.amount * 2 : 0);
+                  const previewRowAmount = ROW_PRIZE_MULTIPLIER * stake + (boostPreview && boostPreview > 0 ? boostPreview * 2 : 0);
+                  const showRowPreview = boostPreview && boostPreview > 0 && !boost && previewRowAmount !== currentRowAmount;
+                  
+                  return showRowPreview ? (
+                    <div className="flex flex-col">
+                      <p className="font-bold text-sm text-gray-500 line-through">
+                        ${currentRowAmount.toFixed(2)}
+                      </p>
+                      <p className="font-bold text-lg text-yellow-400 animate-pulse">
+                        ${previewRowAmount.toFixed(2)}
+                      </p>
+                    </div>
+                  ) : (
+                    <p
+                      className={`font-bold text-lg text-yellow-300 ${
+                        boost?.gameId === game.id ? "animate-pulse" : ""
+                      }`}
+                    >
+                      ${currentRowAmount.toFixed(2)}
+                    </p>
+                  );
+                })()}
               </div>
             </React.Fragment>
           );
         })}
 
         {/* Footer Payout Row */}
-        <div className="p-3 border-t-2 border-white/20 font-bold text-slate-300 text-xs uppercase tracking-wider"></div>
+        <div className="p-3 border-t-2 border-white/20 font-bold text-white text-xs uppercase tracking-wider"></div>
         {GOAL_THRESHOLDS.map((t, colIndex) => {
           const isColComplete = completedLines.cols.includes(colIndex);
+          const currentAmount = t.multiplier * stake + (boost ? boost.amount * 2 : 0);
+          const previewAmount = t.multiplier * stake + (boostPreview && boostPreview > 0 ? boostPreview * 2 : 0);
+          const showPreview = boostPreview && boostPreview > 0 && !boost && previewAmount !== currentAmount;
+          
           return (
             <div
               key={t.value}
@@ -850,17 +887,24 @@ const BettingGrid = ({
                 isColComplete ? "cell-win static-shine" : ""
               }`}
             >
-              <p
-                className={`font-bold text-lg ${
-                  isColComplete ? "text-yellow-300" : "text-green-400"
-                } ${boost ? "text-yellow-400 animate-pulse" : ""}`}
-              >
-                $
-                {(
-                  t.multiplier * stake +
-                  (boost ? boost.amount * 2 : 0)
-                ).toFixed(2)}
-              </p>
+              {showPreview ? (
+                <div className="flex flex-col">
+                  <p className="font-bold text-sm text-gray-500 line-through">
+                    ${currentAmount.toFixed(2)}
+                  </p>
+                  <p className="font-bold text-lg text-yellow-400 animate-pulse">
+                    ${previewAmount.toFixed(2)}
+                  </p>
+                </div>
+              ) : (
+                <p
+                  className={`font-bold text-lg ${
+                    isColComplete ? "text-yellow-300" : "text-green-400"
+                  } ${boost ? "text-yellow-400 animate-pulse" : ""}`}
+                >
+                  ${currentAmount.toFixed(2)}
+                </p>
+              )}
             </div>
           );
         })}
@@ -878,6 +922,8 @@ const PowerUpControls = ({
   isBoosting,
   onConfirmBoost,
   onCancelBoost,
+  onBoostPreviewChange,
+  gameTimes,
 }: {
   boostAvailable: boolean;
   boost: {
@@ -891,8 +937,16 @@ const PowerUpControls = ({
   isBoosting: { teamId: string; gameId: string } | null;
   onConfirmBoost: (amount: number) => void;
   onCancelBoost: () => void;
+  onBoostPreviewChange: (amount: number) => void;
+  gameTimes: { [key: string]: number };
 }) => {
-  const [boostAmount, setBoostAmount] = useState(10);
+  const [boostAmount, setBoostAmount] = useState<string>("10");
+
+  useEffect(() => {
+    if (isBoosting) {
+      onBoostPreviewChange(10);
+    }
+  }, [isBoosting, onBoostPreviewChange]);
 
   if (isBoosting) {
     const team = games
@@ -905,31 +959,36 @@ const PowerUpControls = ({
           ⚡️ BOOST {team.name.toUpperCase()} ⚡️
         </h3>
         <p className="power-up-desc">
-          Chip in extra to double it and add to the prize pool!
+          Pick a match to have a goal in next 5 mins and boost your winnings
         </p>
         <div className="flex flex-col sm:flex-row gap-2 items-center justify-center">
           <div className="relative flex-grow w-full sm:w-auto">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white text-lg">
               $
             </span>
             <input
               type="number"
               value={boostAmount}
-              onChange={(e) =>
-                setBoostAmount(Math.max(1, parseInt(e.target.value, 10) || 0))
-              }
-              className="w-full bg-slate-900 border-2 border-slate-600 rounded-lg p-3 pl-7 text-lg font-bold text-white focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+              onChange={(e) => {
+                setBoostAmount(e.target.value);
+                onBoostPreviewChange(parseFloat(e.target.value) || 0);
+              }}
+              className="w-full border-2 rounded-lg p-3 pl-7 text-lg font-bold text-white focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+              style={{backgroundColor: '#053176', borderColor: '#0340a1'}}
             />
           </div>
           <button
-            onClick={() => onConfirmBoost(boostAmount)}
-            className="w-full sm:w-auto bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-500 transition-colors"
+            onClick={() => onConfirmBoost(parseFloat(boostAmount) || 0)}
+            className="w-full sm:w-auto bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-500 transition-colors cursor-pointer"
           >
             Confirm Boost
           </button>
           <button
             onClick={onCancelBoost}
-            className="w-full sm:w-auto bg-slate-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-slate-600 transition-colors"
+            className="w-full sm:w-auto text-white font-bold py-3 px-6 rounded-lg transition-colors cursor-pointer"
+            style={{backgroundColor: '#0340a1'}}
+            onMouseEnter={(e) => {e.target.style.backgroundColor = '#ffffff'; e.target.style.color = '#0340a1'}}
+            onMouseLeave={(e) => {e.target.style.backgroundColor = '#0340a1'; e.target.style.color = '#ffffff'}}
           >
             Cancel
           </button>
@@ -942,14 +1001,21 @@ const PowerUpControls = ({
     const boostedTeam = games
       .flatMap((g) => [g.home, g.away])
       .find((t) => t.id === boost.teamId);
+    const currentTime = gameTimes[boost.gameId] || 0;
+    const timeRemaining = Math.max(0, boost.expiry - currentTime);
+    
     return (
       <div className="power-up-box used">
         <h3 className="power-up-title">⚡️ BOOST ACTIVE ⚡️</h3>
         {boostedTeam && (
-          <p className="power-up-desc">
-            {boostedTeam.name} boosted with ${boost.amount.toFixed(2)} until{" "}
-            {boost.expiry}'!
-          </p>
+          <div className="power-up-desc">
+            <p>
+              {boostedTeam.name} boosted with ${boost.amount.toFixed(2)}
+            </p>
+            <p className="text-yellow-400 font-bold text-lg mt-2">
+              ⏱️ {timeRemaining}' remaining
+            </p>
+          </div>
         )}
       </div>
     );
@@ -969,17 +1035,16 @@ const PowerUpControls = ({
         <div className="power-up-flare"></div>
         <h3 className="power-up-title">⚡️ POWER-UP READY ⚡️</h3>
         <p className="power-up-desc">
-          Chip in extra cash to double it and add it to the row and column
-          prizes!
+          Pick a match to have a goal in next 5 mins and boost your winnings
         </p>
         <div className="power-up-teams">
           {uniqueTeams.map((team) => (
             <button
               key={team.id}
               onClick={() => onSelectBoostTeam(team.id, team.gameId)}
-              className="power-up-team-button"
+              className="power-up-team-button cursor-pointer"
             >
-              <img src={team.logo} alt={team.name} className="w-10 h-10" />
+              <img src={team.logo} alt={team.name} className="w-auto h-10" />
               <span className="power-up-team-name">{team.name}</span>
             </button>
           ))}
@@ -1014,14 +1079,14 @@ const WinningsDisplay = ({
   const totalStake = stake + boostStake;
   const profit = totalWinnings - totalStake;
   return (
-    <div className="my-4 p-4 bg-slate-800 rounded-xl shadow-lg border-2 border-slate-600 text-center">
-      <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider">
+    <div className="my-4 p-4 rounded-xl shadow-lg border-2 text-center" style={{backgroundColor: '#053176', borderColor: '#0340a1'}}>
+      <h3 className="text-sm font-bold text-white uppercase tracking-wider">
         Winnings
       </h3>
       <p className="text-4xl font-extrabold text-green-400 my-1">
         ${totalWinnings.toFixed(2)}
       </p>
-      <p className="text-xs text-slate-500">
+      <p className="text-xs text-white">
         Total Stake: ${totalStake.toFixed(2)} / Profit:
         <span
           className={`font-bold ${
@@ -1060,37 +1125,53 @@ const Jackpot = ({ amount }: { amount: number }) => {
   const formattedAmount = Math.round(displayAmount).toLocaleString("en-US");
 
   return (
-    <div className="jackpot-box my-4">
-      <div className="jackpot-flare"></div>
-      <div className="jackpot-content">
-        <div className="jackpot-title">
-          <span className="jackpot-crown">👑</span>
-          <span>JACKPOT</span>
-        </div>
-        <div className="jackpot-amount">
-          <span className="jackpot-currency">$</span>
-          {formattedAmount.split("").map((char, index) =>
-            char === "," ? (
-              <span key={index} className="jackpot-comma">
-                ,
+    <div className="relative my-6 mx-4">
+      {/* Outer glow effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400 rounded-2xl blur-lg opacity-75 animate-pulse"></div>
+      
+      {/* Main jackpot container */}
+      <div className="relative bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-600 rounded-2xl p-1 shadow-2xl">
+        {/* Inner container */}
+        <div className="bg-gradient-to-br from-yellow-900 via-yellow-800 to-yellow-900 rounded-xl p-6 text-center relative overflow-hidden">
+          
+          {/* Title section */}
+          <div className="relative z-10 mb-4">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <span className="text-4xl">👑</span>
+              <h2 className="text-3xl font-black tracking-wider text-yellow-100 drop-shadow-lg">
+                JACKPOT
+              </h2>
+            </div>
+            <div className="h-1 bg-gradient-to-r from-transparent via-yellow-300 to-transparent rounded-full mx-8"></div>
+          </div>
+          
+          {/* Amount display */}
+          <div className="relative z-10 mb-4">
+            <div className="text-6xl font-black text-yellow-100 drop-shadow-2xl tracking-wider">
+              <span className="text-yellow-200">$</span>
+              <span className="bg-gradient-to-r from-yellow-100 to-yellow-200 bg-clip-text text-transparent">
+                {formattedAmount}
               </span>
-            ) : (
-              <div key={index} className="jackpot-digit-box">
-                {char}
-              </div>
-            )
-          )}
+            </div>
+          </div>
+          
+          {/* Footer message */}
+          <div className="relative z-10">
+            <div className="h-1 bg-gradient-to-r from-transparent via-yellow-300 to-transparent rounded-full mx-8 mb-3"></div>
+            <p className="text-sm font-bold text-yellow-200 tracking-widest uppercase">
+              Clear the board to win the jackpot
+            </p>
+          </div>
         </div>
-        <div className="jackpot-footer">CLEAR THE BOARD TO WIN THE JACKPOT</div>
       </div>
     </div>
   );
 };
 
 const LiveEventTicker = ({ events }: { events: LiveEvent[] }) => (
-  <div className="bg-slate-800 rounded-xl shadow-2xl border-2 border-slate-600 p-4 my-4">
+  <div className="rounded-xl shadow-2xl border-2 p-4 my-4" style={{backgroundColor: '#053176', borderColor: '#0340a1'}}>
     <div className="flex justify-between items-center mb-3">
-      <h2 className="text-lg font-bold text-slate-300">Live Event Ticker</h2>
+      <h2 className="text-lg font-bold text-white">Live Event Ticker</h2>
       <div className="flex items-center gap-2">
         <span className="relative flex h-3 w-3">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -1099,9 +1180,9 @@ const LiveEventTicker = ({ events }: { events: LiveEvent[] }) => (
         <span className="text-sm font-semibold text-red-400">LIVE</span>
       </div>
     </div>
-    <div className="space-y-3 h-40 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-700">
+          <div className="space-y-3 h-40 overflow-y-auto pr-2 scrollbar-thin">
       {events.length === 0 ? (
-        <p className="text-center text-slate-400 pt-8">
+        <p className="text-center text-white pt-8">
           Click "Simulate Event"...
         </p>
       ) : (
@@ -1115,12 +1196,12 @@ const LiveEventTicker = ({ events }: { events: LiveEvent[] }) => (
             >
               <EventTickerIcon type={event.type} />
               <div className="flex-1">
-                <p className="font-semibold text-sm text-slate-200">
+                <p className="font-semibold text-sm text-white">
                   {event.text}
                 </p>
-                <p className="text-xs text-slate-400">{event.game}</p>
+                <p className="text-xs text-white">{event.game}</p>
               </div>
-              <span className="text-xs font-bold text-slate-500">
+              <span className="text-xs font-bold text-white">
                 {event.minute}'
               </span>
             </div>
@@ -1159,6 +1240,7 @@ export default function App() {
     teamId: string;
     gameId: string;
   } | null>(null);
+  const [boostPreview, setBoostPreview] = useState<number>(0);
 
   const goalAudioRef = useRef<HTMLAudioElement | null>(null);
   const jackpotAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -1390,10 +1472,12 @@ export default function App() {
   const handleSelectBoostTeam = (teamId: string, gameId: string) => {
     if (!boostAvailable) return;
     setIsBoosting({ teamId, gameId });
+    setBoostPreview(10);
   };
 
   const handleCancelBoost = () => {
     setIsBoosting(null);
+    setBoostPreview(0);
   };
 
   const handleConfirmBoost = (amount: number) => {
@@ -1405,12 +1489,13 @@ export default function App() {
     setBoost({
       teamId: teamId,
       gameId,
-      expiry: currentMinute + 15,
+      expiry: currentMinute + 5,
       amount: amount,
     });
     setBoostStake(amount);
     setBoostAvailable(false);
     setIsBoosting(null);
+    setBoostPreview(0);
   };
 
   const handleReset = () => {
@@ -1423,7 +1508,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="bg-[#0a192f] min-h-screen font-sans">
+    <div className="min-h-screen font-sans" style={{backgroundColor: '#ffffff'}}>
       <style>{`
         @keyframes fade-in { 0% { opacity: 0; } 100% { opacity: 1; } }
         @keyframes fade-in-up { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
@@ -1435,15 +1520,15 @@ export default function App() {
         .animate-fade-in-up { animation: fade-in-up 0.4s ease-out forwards; }
         .animate-celebration-zoom { animation: celebration-zoom 0.5s ease-out forwards; }
         .animate-cell-icon-in { animation: cell-icon-in 0.4s ease-out; }
-        .cell-empty { background-color: rgba(10,20,40,0.5); box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
+        .cell-empty { background-color: rgba(5,49,118,0.5); box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
         .cell-filled { background-color: #059669; }
         .cell-win { background-color: #b45309; }
         .cell-win-intersect { background-color: #d97706; }
-        .row-win-bg { background-color: rgba(124, 45, 18, 0.2); }
+        .row-win-bg { background-color: rgba(3,64,161,0.2); }
         .static-shine { background-image: linear-gradient(110deg, transparent 25%, rgba(255, 255, 255, 0.15) 50%, transparent 75%); }
         .scrollbar-thin::-webkit-scrollbar { width: 5px; }
         .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
-        .scrollbar-thin::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 10px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #0340a1; border-radius: 10px; }
         
         @keyframes pulse-green { 0%, 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); } 50% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); } }
         .animate-pulse-green { animation: pulse-green 2s infinite; }
@@ -1451,12 +1536,12 @@ export default function App() {
         .animate-pulse-red { animation: pulse-red 1.5s infinite; }
 
         .jackpot-box {
-            background: #1f2937;
+            background: #053176;
             border-radius: 1rem;
             padding: 1.5rem;
             text-align: center;
             position: relative;
-            border: 1px solid #4b5563;
+            border: 1px solid #0340a1;
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4), 0 4px 6px -2px rgba(0,0,0,0.4);
             overflow: hidden;
         }
@@ -1465,7 +1550,7 @@ export default function App() {
             justify-content: center;
             align-items: center;
             gap: 0.5rem;
-            font-size: 1.125rem;
+            font-size: 2rem;
             font-weight: 700;
             color: #fcd34d;
             text-transform: uppercase;
@@ -1481,15 +1566,15 @@ export default function App() {
             margin-bottom: 0.75rem;
         }
         .jackpot-digit-box {
-            background-color: #111827;
-            color: #f3f4f6;
+            background-color: #053176;
+            color: #ffffff;
             font-family: 'Courier New', Courier, monospace;
             font-size: 3rem;
             font-weight: 700;
             padding: 0.5rem 0.75rem;
             border-radius: 0.375rem;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
-            border-bottom: 2px solid #374155;
+            border-bottom: 2px solid #0340a1;
             min-width: 40px;
         }
         .jackpot-currency {
@@ -1530,19 +1615,19 @@ export default function App() {
         }
 
         .power-up-box {
-            background: #1f2937;
+            background: #053176;
             border-radius: 1rem;
             padding: 1.5rem;
             text-align: center;
             position: relative;
-            border: 1px solid #4b5563;
+            border: 1px solid #0340a1;
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4), 0 4px 6px -2px rgba(0,0,0,0.4);
             overflow: hidden;
             margin-top: 1rem;
         }
         .power-up-box.used {
-            background: #374151;
-            border-color: #6b7280;
+            background: #053176;
+            border-color: #0340a1;
         }
         .power-up-title {
             font-size: 1.25rem;
@@ -1570,23 +1655,23 @@ export default function App() {
             align-items: center;
             gap: 0.5rem;
             padding: 0.5rem;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.1);
             border-radius: 0.5rem;
-            border: 1px solid #4b5563;
+            border: 1px solid #0340a1;
             transition: all 0.2s ease-in-out;
-            color: #f3f4f6;
+            color: #ffffff;
             font-size: 0.75rem;
             font-weight: 600;
         }
         .power-up-team-button:hover {
             transform: translateY(-2px);
-            background: rgba(255,255,255,0.1);
-            border-color: #fcd34d;
+            background: #0340a1;
+            border-color: #ffffff;
         }
         .power-up-team-name {
             font-size: 0.75rem;
             font-weight: 600;
-            color: #f3f4f6;
+            color: #ffffff;
         }
         .power-up-flare {
             position: absolute;
@@ -1601,7 +1686,7 @@ export default function App() {
       <Header />
       <main className="p-4 max-w-4xl mx-auto">
         <div className="text-center mb-6">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-slate-100">
+          <h1 className="text-5xl md:text-6xl font-black tracking-tighter" style={{color: '#0340a1'}}>
             Bet Ladder
           </h1>
         </div>
@@ -1634,6 +1719,7 @@ export default function App() {
               completedLines={completedLines}
               gameTimes={gameTimes}
               boost={boost}
+              boostPreview={boostPreview}
             />
             <PowerUpControls
               games={selectedGames}
@@ -1643,13 +1729,18 @@ export default function App() {
               isBoosting={isBoosting}
               onConfirmBoost={handleConfirmBoost}
               onCancelBoost={handleCancelBoost}
+              onBoostPreviewChange={setBoostPreview}
+              gameTimes={gameTimes}
             />
             <LiveEventTicker events={events} />
             <div className="fixed bottom-4 right-4 z-30 flex flex-col items-end gap-2">
               <div className="flex gap-2">
-                <button
+                                              <button
                   onClick={() => setIsSimulating(!isSimulating)}
-                  className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                  className="text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-colors flex items-center gap-2 cursor-pointer"
+                  style={{backgroundColor: '#0340a1'}}
+                  onMouseEnter={(e) => {e.target.style.backgroundColor = '#ffffff'; e.target.style.color = '#0340a1'}}
+                  onMouseLeave={(e) => {e.target.style.backgroundColor = '#0340a1'; e.target.style.color = '#ffffff'}}
                 >
                   {isSimulating ? <PauseIcon /> : <PlayIcon />}
                   {isSimulating ? "Pause" : "Play"}
@@ -1657,9 +1748,12 @@ export default function App() {
                 <button
                   onClick={() => setSimSpeed((s) => (s === 4 ? 1 : s * 2))}
                   disabled={!isSimulating}
-                  className={`bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg hover:bg-purple-700 transition-colors flex items-center gap-2 ${
-                    !isSimulating ? "opacity-50 cursor-not-allowed" : ""
+                  className={`text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-colors flex items-center gap-2 ${
+                    !isSimulating ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
                   }`}
+                  style={{backgroundColor: '#0340a1'}}
+                  onMouseEnter={!isSimulating ? undefined : (e) => {e.target.style.backgroundColor = '#ffffff'; e.target.style.color = '#0340a1'}}
+                  onMouseLeave={!isSimulating ? undefined : (e) => {e.target.style.backgroundColor = '#0340a1'; e.target.style.color = '#ffffff'}}
                 >
                   <FastForwardIcon />
                   {simSpeed}x
@@ -1667,7 +1761,10 @@ export default function App() {
               </div>
               <button
                 onClick={handleReset}
-                className="bg-slate-500 text-white font-semibold py-2 px-4 rounded-lg shadow-lg hover:bg-slate-600 transition-colors flex items-center gap-2"
+                className="text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-colors flex items-center gap-2 cursor-pointer"
+                style={{backgroundColor: '#0340a1'}}
+                onMouseEnter={(e) => {e.target.style.backgroundColor = '#ffffff'; e.target.style.color = '#0340a1'}}
+                onMouseLeave={(e) => {e.target.style.backgroundColor = '#0340a1'; e.target.style.color = '#ffffff'}}
               >
                 <ResetIcon />
                 Reset
