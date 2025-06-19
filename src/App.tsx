@@ -748,20 +748,20 @@ const BettingGrid = ({
 }) => {
   return (
     <div
-      className="p-1.5 rounded-xl shadow-2xl border-2"
+      className="p-1 sm:p-1.5 rounded-xl shadow-2xl border-2 overflow-x-auto"
       style={{ "--shine-angle": "15deg", backgroundColor: '#053176', borderColor: '#0340a1' } as CSSProperties}
     >
-      <div className="grid grid-cols-[2fr_repeat(6,1fr)]">
+      <div className="grid grid-cols-[1fr_repeat(6,0.8fr)] sm:grid-cols-[2fr_repeat(6,1fr)] min-w-[320px] sm:min-w-0">
         {/* Header Row */}
-        <div className="p-3 font-bold text-white text-xs uppercase tracking-wider">
+        <div className="p-1 sm:p-3 font-bold text-white text-xs uppercase tracking-wider">
           Game
         </div>
         {GOAL_THRESHOLDS.map((t) => (
-          <div key={t.value} className="text-center p-3">
-            <p className="font-extrabold text-white text-lg">{t.value}+</p>
+          <div key={t.value} className="text-center p-1 sm:p-3">
+            <p className="font-extrabold text-white text-xs sm:text-lg">{t.value}+</p>
           </div>
         ))}
-        <div className="text-center p-3 font-bold text-white text-xs uppercase tracking-wider"></div>
+        <div className="text-center p-1 sm:p-3 font-bold text-white text-xs uppercase tracking-wider"></div>
 
         {/* Game Rows */}
         {games.map((game, rowIndex) => {
@@ -775,24 +775,24 @@ const BettingGrid = ({
           return (
             <React.Fragment key={game.id}>
               <div
-                className={`p-3 border-t border-white/10 relative ${
+                className={`p-1 sm:p-3 border-t border-white/10 relative ${
                   isRowComplete ? "row-win-bg static-shine" : ""
                 }`}
               >
                 {gameTimes[game.id] > 0 && (
-                  <span className="absolute top-1 right-2 text-xs font-bold text-red-500 animate-pulse-red">
-                    {gameTimes[game.id]}’
+                  <span className="absolute bottom-1 right-1 sm:right-2 text-xs font-bold text-red-500 animate-pulse-red">
+                    {gameTimes[game.id]}'
                   </span>
                 )}
 
                 <div className="flex items-center justify-between">
-                  <p className="font-bold text-base text-white">
+                  <p className="font-bold text-xs sm:text-base text-white leading-tight">
                     {game.home.name} vs {game.away.name}
                   </p>
                 </div>
 
                 <p
-                  className={`text-xl font-bold transition-colors duration-300 ${
+                  className={`text-lg sm:text-xl font-bold transition-colors duration-300 ${
                     isHomeBoosted
                       ? "text-yellow-400 animate-pulse"
                       : "text-blue-300"
@@ -821,25 +821,25 @@ const BettingGrid = ({
                 return (
                   <div
                     key={colIndex}
-                    className={`border-t border-l border-white/10 relative`}
+                    className={`border-t border-l border-white/10 relative min-h-[50px] sm:min-h-[80px]`}
                   >
                     <div
                       className={`absolute inset-0 transition-all duration-300 ${cellClass} ${
                         isRowComplete || isColComplete ? "static-shine" : ""
                       }`}
                     ></div>
-                    {isFilled && (
-                      <div className="absolute inset-0 flex items-center justify-center animate-cell-icon-in">
-                        <div className="w-8 h-8">
-                          <FootballIcon />
+                                          {isFilled && (
+                        <div className="absolute inset-0 flex items-center justify-center animate-cell-icon-in">
+                          <div className="w-4 h-4 sm:w-8 sm:h-8">
+                            <FootballIcon />
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </div>
                 );
               })}
               <div
-                className={`p-1.5 border-t border-l border-white/10 flex items-center justify-center ${
+                className={`p-0.5 sm:p-1.5 border-t border-l border-white/10 flex items-center justify-center ${
                   isRowComplete ? "row-win-bg static-shine" : ""
                 }`}
               >
@@ -850,20 +850,20 @@ const BettingGrid = ({
                   
                   return showRowPreview ? (
                     <div className="flex flex-col">
-                      <p className="font-bold text-sm text-gray-500 line-through">
-                        ${currentRowAmount.toFixed(2)}
+                      <p className="font-bold text-xs sm:text-sm text-gray-500 line-through">
+                        ${currentRowAmount.toFixed(0)}
                       </p>
-                      <p className="font-bold text-lg text-yellow-400 animate-pulse">
-                        ${previewRowAmount.toFixed(2)}
+                      <p className="font-bold text-xs sm:text-lg text-yellow-400 animate-pulse">
+                        ${previewRowAmount.toFixed(0)}
                       </p>
                     </div>
                   ) : (
                     <p
-                      className={`font-bold text-lg text-yellow-300 ${
-                        boost?.gameId === game.id ? "animate-pulse" : ""
-                      }`}
+                      className={`font-bold text-xs sm:text-lg ${
+                        isRowComplete ? "text-yellow-300" : "text-yellow-300"
+                      } ${boost?.gameId === game.id ? "animate-pulse" : ""}`}
                     >
-                      ${currentRowAmount.toFixed(2)}
+                      ${currentRowAmount.toFixed(0)}
                     </p>
                   );
                 })()}
@@ -873,7 +873,7 @@ const BettingGrid = ({
         })}
 
         {/* Footer Payout Row */}
-        <div className="p-3 border-t-2 border-white/20 font-bold text-white text-xs uppercase tracking-wider"></div>
+        <div className="p-1 sm:p-3 border-t-2 border-white/20 font-bold text-white text-xs uppercase tracking-wider"></div>
         {GOAL_THRESHOLDS.map((t, colIndex) => {
           const isColComplete = completedLines.cols.includes(colIndex);
           const currentAmount = t.multiplier * stake + (boost ? boost.amount * 2 : 0);
@@ -883,26 +883,26 @@ const BettingGrid = ({
           return (
             <div
               key={t.value}
-              className={`text-center p-3 border-t-2 border-l border-white/20 ${
+              className={`text-center p-1 sm:p-3 border-t-2 border-l border-white/20 ${
                 isColComplete ? "cell-win static-shine" : ""
               }`}
             >
               {showPreview ? (
                 <div className="flex flex-col">
-                  <p className="font-bold text-sm text-gray-500 line-through">
-                    ${currentAmount.toFixed(2)}
+                  <p className="font-bold text-xs sm:text-sm text-gray-500 line-through">
+                    ${currentAmount.toFixed(0)}
                   </p>
-                  <p className="font-bold text-lg text-yellow-400 animate-pulse">
-                    ${previewAmount.toFixed(2)}
+                  <p className="font-bold text-xs sm:text-lg text-yellow-400 animate-pulse">
+                    ${previewAmount.toFixed(0)}
                   </p>
                 </div>
               ) : (
                 <p
-                  className={`font-bold text-lg ${
+                  className={`font-bold text-xs sm:text-lg ${
                     isColComplete ? "text-yellow-300" : "text-green-400"
                   } ${boost ? "text-yellow-400 animate-pulse" : ""}`}
                 >
-                  ${currentAmount.toFixed(2)}
+                  ${currentAmount.toFixed(0)}
                 </p>
               )}
             </div>
@@ -1524,7 +1524,7 @@ export default function App() {
         .cell-filled { background-color: #059669; }
         .cell-win { background-color: #b45309; }
         .cell-win-intersect { background-color: #d97706; }
-        .row-win-bg { background-color: rgba(3,64,161,0.2); }
+        .row-win-bg { background-color: #b45309; }
         .static-shine { background-image: linear-gradient(110deg, transparent 25%, rgba(255, 255, 255, 0.15) 50%, transparent 75%); }
         .scrollbar-thin::-webkit-scrollbar { width: 5px; }
         .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
